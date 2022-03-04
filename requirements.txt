@@ -1,0 +1,3 @@
+telethon
+cryptg
+python-gnupg
