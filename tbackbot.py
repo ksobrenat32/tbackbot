@@ -6,12 +6,12 @@ import tarfile
 from telethon import TelegramClient
 
 # Configuration, fill this with your data.
-bot_token = "" # The bot token from BotFather 
-api_id = "" # The API id
-api_hash = "" # The API hash
-chat_id = "" # The chat to send (channel or user)
-toSend = "" # The file or directory to send  (absoloute path)
-gpgRecipient = "" # The key fingerprint that will be able to decrypt it
+bot_token = os.getenv('TG_BOT_TOKEN') # The bot token from BotFather 
+api_id = os.getenv('TG_API_ID') # The API id
+api_hash = os.getenv('TG_API_HASH') # The API hash
+chat_id = os.getenv('TG_CHAT_ID') # The chat to send (channel or user)
+toSend = "/data" # The file or directory to send  (absoloute path)
+gpgRecipient = os.getenv('GPG_KEY_FP') # The key fingerprint that will be able to decrypt it
 
 thingToSend = (os.path.abspath(toSend))
 tarFile = ("{}.txz".format(thingToSend))
@@ -37,6 +37,7 @@ def createGPG():
         status = gpg.encrypt_file(stream,
         recipients=gpgRecipient,
         armor=False,
+        always_trust=True,
         output=thingToSend + ".gpg")
     # If it is a dir, use encypt tarfile
     else:
@@ -44,6 +45,7 @@ def createGPG():
         status = gpg.encrypt_file(stream,
         recipients=gpgRecipient,
         armor=False,
+        always_trust=True,
         output=thingToSend + ".txz.gpg")
         print ('ok: ', status.ok)
         print ('status: ', status.status)
