@@ -5,7 +5,7 @@ set -e
 CMD="/app/tbackbot.py"
 
 # Check if variables are set
-if [[ -n "$TG_BOT_TOKEN" ]] && [[ -n "$TG_API_ID" ]] && [[ -n "$TG_API_HASH" ]] && [[ -n "$TG_CHAT_ID" ]] && [[ -n "$GPG_KEY_FP" ]]; then
+if [[ -n "$TG_BOT_TOKEN" ]] && [[ -n "$TG_API_ID" ]] && [[ -n "$TG_API_HASH" ]] && [[ -n "$TG_CHAT_ID" ]] && [[ -n "$GPG_KEY_FP" ]] && [[ -n "$TAR_NAME" ]]; then
     echo "Variables set"
 else
     echo "Missing variables"
