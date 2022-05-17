@@ -10,9 +10,9 @@ bot_token = os.getenv('TG_BOT_TOKEN') # The bot token from BotFather
 api_id = os.getenv('TG_API_ID') # The API id
 api_hash = os.getenv('TG_API_HASH') # The API hash
 chat_id = os.getenv('TG_CHAT_ID') # The chat to send (channel or user)
+tarName = os.getenv('TAR_NAME') # The name of the generated tar
 
 gpgRecipient = os.getenv('GPG_KEY_FP') # The key fingerprint that will be able to decrypt it
-tarName = os.getenv('TAR_NAME') # The name of the generated tar
 
 dirToSend = ('/data') # Path to dir to send
 tarFile = ("{}.txz".format(tarName)) # Tarfile's name

@@ -19,15 +19,15 @@ This is a python3 script that helps to backup a directory
 ```sh
 podman run -d --name tbk-test \
     --replace \
-    -e TG_BOT_TOKEN="" `#The bot token` \
+    -e TZ="" `#Timezone` \
+    -e TG_BOT_TOKEN="" `#The bot token from bot father` \
     -e TG_API_ID="" `#Telegram API ID` \
     -e TG_API_HASH="" `#Telegram API hash` \
-    -e TG_CHAT_ID="" `#Telegram chat id` \
-    -e GPG_KEY_FP="" `#GnuPG key fingerprint` \
+    -e TG_CHAT_ID="" `#Telegram chat id (user or channel)` \
     -e TAR_NAME="" `#Name of the generated tar` \
-    -v ./data1:/data/dir1:z `#The first directory to backup` \
-    -v ./data2:/data/dir2:z `#The second directory to backup` \
-    -v ./keys:/keys:z `#A directory with the gpg public key` \
+    -v ./data1:/data/dir1:ro,z `#The first directory to backup` \
+    -v ./data2:/data/dir2:ro,z `#The second directory to backup` \
+    -v ./public.key:/public.key:ro,z `#A directory with the gpg public key` \
     ghcr.io/ksobrenat32/tbackbot
 ```
 
@@ -51,7 +51,7 @@ RequiresMountsFor=%t/containers
 Environment=PODMAN_SYSTEMD_UNIT=%n
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/%n.ctr-id
-ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --replace -d --name tbackbot --env-file /path/to/tbackbot/.env -v /backup/dir1:/data/dir1:ro,z -v /backup/dir2:/data/dir2:ro,z -v /backup/gpg/keys:/keys:z ghcr.io/ksobrenat32/tbackbot:latest
+ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --replace -d --name tbackbot --env-file /path/to/tbackbot/env -v /backup/dir1:/data/dir1:ro,z -v /backup/dir2:/data/dir2:ro,z -v /path/to/gpg/public.key:/public.key:ro,z ghcr.io/ksobrenat32/tbackbot:latest
 ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
 Type=notify
