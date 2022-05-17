@@ -1,0 +1,25 @@
+name: Build Container Image
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: tbackbot
+
+
+jobs:
+  pushGitHubReg:
+    name: Push to Github Registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build arm64 image
+        run: docker buildx build . --file ./Containerfile --tag ghcr.io/${{ github.actor }}/${IMAGE_NAME} --platform=linux/arm64,linux/amd64 --push
