@@ -18,6 +18,8 @@ dirToSend = ('/data') # Path to dir to send
 tarFile = ("{}.txz".format(tarName)) # Tarfile's name
 encryptedTar = ("{}.gpg".format(tarFile)) # Encrypted Tarfile's name
 
+
+
 def createTar():
     with tarfile.open(tarFile, 'w:xz') as tar:
         tar.add(dirToSend, arcname=os.path.basename(dirToSend))
@@ -35,9 +37,21 @@ def createGPG():
     print ('ok: ', status.ok)
     print ('status: ', status.status)
     print ('stderr: ', status.stderr)
+    
+def splitFile():
+    try:
+        split_command = ' '.join(["split -d -b 1G --additional-suffix='.split'", encryptedTar, encryptedTar])
+        os.system(split_command)
+    except:
+        print("Error: Unable to use the split program.")
+    
 
 def deleteTmpFiles():
     try:
+        dir_files = os.listdir()
+        for file in dir_files:
+            if file.endswith(".split"):
+                os.remove(file)
         os.remove(tarFile)
         os.remove(encryptedTar)
     except:
@@ -50,9 +64,23 @@ chat_id=int(chat_id)
 bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 async def main():
+    print("Creating tar ...")
     createTar()
+    print("Encrypting with gpg ...")
     createGPG()
-    await bot.send_file(chat_id, encryptedTar)
+    file_size = os.path.getsize(encryptedTar)
+    if ( file_size > 1610612736 ):
+        print("Encrypted tar file Size is bigger than 1.5G spliting to 1G files") 
+        splitFile()
+        dir_files = os.listdir()
+        for file in dir_files:
+            if file.endswith(".split"):
+                print("Sending file", file)
+                await bot.send_file(chat_id, file)
+    else:
+        print("Sending file", encryptedTar)
+        await bot.send_file(chat_id, encryptedTar)
     deleteTmpFiles()
+
 with bot:
     bot.loop.run_until_complete(main())
